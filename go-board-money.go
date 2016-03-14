@@ -4,18 +4,42 @@ package main
 import (
 	//	"flag"
 	"fmt"
-	//	"go-bot-news/pkg"
+	"go-board-money/pick"
 	//	"go-bot-news/pkg/html"
 	//	"io"
 	"io/ioutil"
 	//	"log"
 	"net/http"
 	//	"os"
-	//	"strings"
+	//	"strconv"
+	"strings"
 	//	"time"
 
 	"golang.org/x/net/html/charset"
 )
+
+type Kurs struct {
+	namebank string  // название банка
+	valuta   string  // название валюты
+	pokupka  float64 // покупка валюты (покупает банк)
+	prodaja  float64 // продажа валюты  (продает банк)
+}
+
+//удаление пустых или строк в которых только пробелы
+func delspace(ss []string) []string {
+	res := make([]string, 0)
+	for _, s := range ss {
+		if strings.TrimSpace(s) != "" {
+			res = append(res, strings.TrimSpace(s))
+		}
+	}
+	return res
+}
+
+func convstrtofloat(s string) float64 {
+	res := 0.0
+	return res
+}
 
 //получение страницы из урла url
 func gethtmlpage(url string) []byte {
@@ -47,37 +71,52 @@ func printarray(s []string) {
 	return
 }
 
-//парсер новостей с сайта Яндекса
-//func (this *News) ParserNewsYandex() {
+//парсер валют со сбербанка
+func ParserSbrf(url string) []Kurs {
 
-//	if this.url == "" {
-//		return
-//	}
+	kursvaluta := make([]Kurs, 0)
 
-//	body := gethtmlpage(this.url)
-//	shtml := string(body)
+	if url == "" {
+		return kursvaluta
+	}
 
-//	//<h1 class="story__head">Блаттера и Платини отстранили от футбола на 8 лет</h1>
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
 
-//	stitle, _ := pick.PickText(&pick.Option{
-//		&shtml,
-//		"h1",
-//		&pick.Attr{
-//			"class",
-//			"story__head",
-//		},
-//	})
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"table",
+		&pick.Attr{
+			"class",
+			"table3_eggs4",
+		},
+	})
 
-//	if len(stitle) > 0 {
-//		this.title = stitle[0]
-//		//	<meta name="og:description" content="«У Турции есть полное право проводить антитеррористические операции в Сирии и других странах, где базируются террористические группировки, так как это часть борьбы против стоящих перед нами угроз», — сказал Эрдоган."/>
-//		scont, _ := pick.PickAttr(&pick.Option{&shtml, "meta", &pick.Attr{"name", "og:description"}}, "content")
-//		this.content = scont[0]
-//	}
+	stable = delspace(stable)
+	fmt.Println(stable)
 
-//	return
-//}
+	kursvaluta = append(kursvaluta, Kurs{namebank: "SBRF", valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{namebank: "SBRF", valuta: "EUR"})
+
+	ss := stable[2]
+	ss[strings.Index(ss, ",")] = "."
+	fmt.Println(ss)
+	//	fmt.Println(fpr)
+	kursvaluta[0].pokupka = 0 //fpr
+
+	return kursvaluta
+}
 
 func main() {
-	fmt.Println("Hello World!")
+	//	var vkurs Kurs
+
+	fmt.Println("Start parser")
+
+	vkurs := ParserSbrf("http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta")
+	fmt.Println(vkurs)
+
+	fmt.Println("End parser")
+
 }

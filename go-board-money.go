@@ -11,7 +11,7 @@ import (
 	//	"log"
 	"net/http"
 	//	"os"
-	//	"strconv"
+	"strconv"
 	"strings"
 	//	"time"
 
@@ -37,7 +37,7 @@ func delspace(ss []string) []string {
 }
 
 func convstrtofloat(s string) float64 {
-	res := 0.0
+	res, _ := strconv.ParseFloat(strings.Replace(s, ",", ".", 1), 64)
 	return res
 }
 
@@ -71,6 +71,14 @@ func printarray(s []string) {
 	return
 }
 
+func printarraykurs(s []Kurs) {
+	//	fmt.Println("BANK", "VALUTA", "POKUPKA", "PRODAJA")
+	for _, v := range s {
+		fmt.Println(v.namebank, v.valuta, v.pokupka, v.prodaja)
+	}
+	return
+}
+
 //парсер валют со сбербанка
 func ParserSbrf(url string) []Kurs {
 
@@ -95,27 +103,83 @@ func ParserSbrf(url string) []Kurs {
 	})
 
 	stable = delspace(stable)
-	fmt.Println(stable)
+	//	fmt.Println(stable)
 
 	kursvaluta = append(kursvaluta, Kurs{namebank: "SBRF", valuta: "USD"})
 	kursvaluta = append(kursvaluta, Kurs{namebank: "SBRF", valuta: "EUR"})
+	if len(stable) >= 6 {
+		// USD
+		kursvaluta[0].pokupka = convstrtofloat(stable[2])
+		kursvaluta[0].prodaja = convstrtofloat(stable[3])
+		// EUR
+		kursvaluta[1].pokupka = convstrtofloat(stable[4])
+		kursvaluta[1].prodaja = convstrtofloat(stable[5])
+	} else {
+		fmt.Println("Error parse ParserSbrf ")
+		fmt.Println(stable)
+	}
 
-	ss := stable[2]
-	ss[strings.Index(ss, ",")] = "."
-	fmt.Println(ss)
-	//	fmt.Println(fpr)
-	kursvaluta[0].pokupka = 0 //fpr
+	return kursvaluta
+}
+
+//парсер валют с ак барс банка
+func ParserAkBars(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"table",
+		&pick.Attr{
+			"class",
+			"tableDesc",
+		},
+	})
+
+	stable = delspace(stable)
+	//	fmt.Println(stable)
+
+	kursvaluta = append(kursvaluta, Kurs{namebank: "AKBARS", valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{namebank: "AKBARS", valuta: "EUR"})
+	if len(stable) >= 14 {
+		//		// USD
+		kursvaluta[0].pokupka = convstrtofloat(stable[3])
+		kursvaluta[0].prodaja = convstrtofloat(stable[6])
+		// EUR
+		kursvaluta[1].pokupka = convstrtofloat(stable[10])
+		kursvaluta[1].prodaja = convstrtofloat(stable[13])
+	} else {
+		fmt.Println("Error parse ParserAkBars ")
+		fmt.Println(stable)
+	}
 
 	return kursvaluta
 }
 
 func main() {
 	//	var vkurs Kurs
+	board_valuta := make([]Kurs, 0)
 
 	fmt.Println("Start parser")
 
 	vkurs := ParserSbrf("http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta")
-	fmt.Println(vkurs)
+	board_valuta = append(board_valuta, vkurs[0])
+	board_valuta = append(board_valuta, vkurs[1])
+
+	vkurs = ParserAkBars("https://www.akbars.ru/")
+	board_valuta = append(board_valuta, vkurs[0])
+	board_valuta = append(board_valuta, vkurs[1])
+
+	printarraykurs(board_valuta)
 
 	fmt.Println("End parser")
 

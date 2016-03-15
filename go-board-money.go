@@ -80,7 +80,7 @@ func printarraykurs(s []Kurs) {
 }
 
 //парсер валют со сбербанка
-func ParserSbrf(url string) []Kurs {
+func ParserValutaSbrf(url string) []Kurs {
 
 	kursvaluta := make([]Kurs, 0)
 
@@ -123,7 +123,7 @@ func ParserSbrf(url string) []Kurs {
 }
 
 //парсер валют с ак барс банка
-func ParserAkBars(url string) []Kurs {
+func ParserValutaAkBars(url string) []Kurs {
 
 	kursvaluta := make([]Kurs, 0)
 
@@ -171,11 +171,11 @@ func main() {
 
 	fmt.Println("Start parser")
 
-	vkurs := ParserSbrf("http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta")
+	vkurs := ParserValutaSbrf("http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta")
 	board_valuta = append(board_valuta, vkurs[0])
 	board_valuta = append(board_valuta, vkurs[1])
 
-	vkurs = ParserAkBars("https://www.akbars.ru/")
+	vkurs = ParserValutaAkBars("https://www.akbars.ru/")
 	board_valuta = append(board_valuta, vkurs[0])
 	board_valuta = append(board_valuta, vkurs[1])
 

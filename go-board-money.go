@@ -165,6 +165,60 @@ func ParserValutaAkBars(url string) []Kurs {
 	return kursvaluta
 }
 
+//парсер валют с Татфондбанка банка
+func ParserValutaTfb(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"tr",
+		&pick.Attr{
+			"class",
+			"usd",
+		},
+	})
+
+	stable2, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"tr",
+		&pick.Attr{
+			"class",
+			"euro",
+		},
+	})
+
+	stable = delspace(stable)
+	stable2 = delspace(stable2)
+	//	fmt.Println(stable2)
+
+	kursvaluta = append(kursvaluta, Kurs{namebank: "TFB", valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{namebank: "TFB", valuta: "EUR"})
+	if (len(stable) >= 3) && (len(stable2) >= 3) {
+		//		// USD
+		kursvaluta[0].pokupka = convstrtofloat(stable[1])
+		kursvaluta[0].prodaja = convstrtofloat(stable[2])
+		//		// EUR
+		kursvaluta[1].pokupka = convstrtofloat(stable2[1])
+		kursvaluta[1].prodaja = convstrtofloat(stable2[2])
+	} else {
+		fmt.Println("Error parse ParserAkBars ")
+		fmt.Println("stable = ", stable)
+		fmt.Println("stable2 = ", stable2)
+	}
+
+	return kursvaluta
+}
+
 func main() {
 	//	var vkurs Kurs
 	board_valuta := make([]Kurs, 0)
@@ -176,6 +230,10 @@ func main() {
 	board_valuta = append(board_valuta, vkurs[1])
 
 	vkurs = ParserValutaAkBars("https://www.akbars.ru/")
+	board_valuta = append(board_valuta, vkurs[0])
+	board_valuta = append(board_valuta, vkurs[1])
+
+	vkurs = ParserValutaTfb("http://tfb.ru/")
 	board_valuta = append(board_valuta, vkurs[0])
 	board_valuta = append(board_valuta, vkurs[1])
 

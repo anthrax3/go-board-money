@@ -72,9 +72,10 @@ func printarray(s []string) {
 }
 
 func printarraykurs(s []Kurs) {
-	//	fmt.Println("BANK", "VALUTA", "POKUPKA", "PRODAJA")
+	fmt.Println("|BANK   |", "VALUTA|", "POKUPKA|", "PRODAJA|")
+	fmt.Println("------------------------------------------------------------")
 	for _, v := range s {
-		fmt.Println(v.namebank, v.valuta, v.pokupka, v.prodaja)
+		fmt.Printf("|%-7s|%-7s|%8.2f|%8.2f|\n", v.namebank, v.valuta, v.pokupka, v.prodaja)
 	}
 	return
 }

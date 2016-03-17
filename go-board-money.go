@@ -154,10 +154,10 @@ func ParserValutaAkBars(url string) []Kurs {
 	if len(stable) >= 14 {
 		//		// USD
 		kursvaluta[0].pokupka = convstrtofloat(stable[3])
-		kursvaluta[0].prodaja = convstrtofloat(stable[6])
+		kursvaluta[0].prodaja = convstrtofloat(stable[5])
 		// EUR
-		kursvaluta[1].pokupka = convstrtofloat(stable[10])
-		kursvaluta[1].prodaja = convstrtofloat(stable[13])
+		kursvaluta[1].pokupka = convstrtofloat(stable[9])
+		kursvaluta[1].prodaja = convstrtofloat(stable[11])
 	} else {
 		fmt.Println("Error parse ParserAkBars ")
 		fmt.Println(stable)
@@ -220,25 +220,89 @@ func ParserValutaTfb(url string) []Kurs {
 	return kursvaluta
 }
 
+//парсер валют с Бинбанка
+func ParserValutaBibbank(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"table",
+		&pick.Attr{
+			"class",
+			"step4_cours",
+		},
+	})
+
+	stable = delspace(stable)
+	//	fmt.Println(stable)
+
+	kursvaluta = append(kursvaluta, Kurs{namebank: "BINBANK", valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{namebank: "BINBANK", valuta: "EUR"})
+	//	if (len(stable) >= 3) && (len(stable2) >= 3) {
+	//		// USD
+	kursvaluta[0].pokupka = convstrtofloat(stable[3])
+	kursvaluta[0].prodaja = convstrtofloat(stable[4])
+	//		// EUR
+	kursvaluta[1].pokupka = convstrtofloat(stable[6])
+	kursvaluta[1].prodaja = convstrtofloat(stable[7])
+	//	} else {
+	//		fmt.Println("Error parse ParserAkBars ")
+	//		fmt.Println("stable = ", stable)
+	//		fmt.Println("stable2 = ", stable2)
+	//	}
+
+	return kursvaluta
+}
+
 func main() {
 	//	var vkurs Kurs
+	linksbanks := make(map[string]string, 0)
+	linksbanks["SBRF"] = "http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta"
+	linksbanks["TFB"] = "http://tfb.ru/"
+	linksbanks["AKBARS"] = "https://www.akbars.ru/"
+	linksbanks["BINBANK"] = "http://www.binbank.ru/"
+
+	fmt.Println(linksbanks)
+
 	board_valuta := make([]Kurs, 0)
 
 	fmt.Println("Start parser")
 
-	vkurs := ParserValutaSbrf("http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta")
+	vkurs := ParserValutaSbrf(linksbanks["SBRF"])
 	board_valuta = append(board_valuta, vkurs[0])
 	board_valuta = append(board_valuta, vkurs[1])
 
-	vkurs = ParserValutaAkBars("https://www.akbars.ru/")
+	vkurs = ParserValutaAkBars(linksbanks["AKBARS"])
 	board_valuta = append(board_valuta, vkurs[0])
 	board_valuta = append(board_valuta, vkurs[1])
 
-	vkurs = ParserValutaTfb("http://tfb.ru/")
+	vkurs = ParserValutaTfb(linksbanks["TFB"])
 	board_valuta = append(board_valuta, vkurs[0])
 	board_valuta = append(board_valuta, vkurs[1])
 
-	printarraykurs(board_valuta)
+	vkurs = ParserValutaBibbank(linksbanks["BINBANK"])
+	board_valuta = append(board_valuta, vkurs[0])
+	board_valuta = append(board_valuta, vkurs[1])
+
+	//	printarraykurs(board_valuta)
+
+	ss := ""
+	for _, v := range board_valuta {
+		ss += "<TR>" + "<TD> " + v.namebank + "</TD>" + "<TD> " + v.valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.pokupka, 'f', 2, 32) + "</TD>" + "<TD> " + strconv.FormatFloat(v.prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+	}
+
+	str := pick.HtmlpageBegins() + pick.HtmlTableValuta(ss) + pick.HtmlpageEnds()
+	pick.Savestrtofile("board-money.html", str)
 
 	fmt.Println("End parser")
 

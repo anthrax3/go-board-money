@@ -78,3 +78,13 @@ func HtmlTableValuta(ss string) string {
 	bodystr += ss + "</TABLE>"
 	return bodystr
 }
+
+// шаблон оформления таблицы
+func HtmlTableValutaOld(ss string) string {
+	bodystr := "<h3 align=\"center\"></h3><br>" + "<TABLE align=\"center\" border=\"1\"><TR><TD>БАНК</TD><TD>ВАЛЮТА</TD><TD>ПОКУПКА</TD><TD>ПРОДАЖА</TD></TR>"
+	//	for i := 0; i < len(sn); i++ {
+	//		bodystr += "<TR> <TD width=\"350\"> <b>" + genhtml.Link(sn[i].title, sn[i].url) + "</b></TD>" + "<TD width=\"550\"><br>" + sn[i].content + "" + "<br> <a href=\"#MainPage\"> В начало </a>" + " <a href=\"#" + titlenews + "\"> К " + titlenews + " </a> " + "</TD> </TR>"
+	//	}
+	bodystr += ss + "</TABLE>"
+	return bodystr
+}

@@ -2,303 +2,93 @@
 package main
 
 import (
-	//	"flag"
 	"fmt"
+	"go-board-money/parsebank"
 	"go-board-money/pick"
-	//	"go-bot-news/pkg/html"
-	//	"io"
-	"io/ioutil"
-	//	"log"
-	"net/http"
-	//	"os"
+	//	"io/ioutil"
+	//	"net/http"
 	"strconv"
-	"strings"
-	//	"time"
+	//	"strings"
 
-	"golang.org/x/net/html/charset"
+	//	"golang.org/x/net/html/charset"
 )
 
-type Kurs struct {
-	namebank string  // название банка
-	valuta   string  // название валюты
-	pokupka  float64 // покупка валюты (покупает банк)
-	prodaja  float64 // продажа валюты  (продает банк)
-}
-
-//удаление пустых или строк в которых только пробелы
-func delspace(ss []string) []string {
-	res := make([]string, 0)
-	for _, s := range ss {
-		if strings.TrimSpace(s) != "" {
-			res = append(res, strings.TrimSpace(s))
-		}
-	}
-	return res
-}
-
-func convstrtofloat(s string) float64 {
-	res, _ := strconv.ParseFloat(strings.Replace(s, ",", ".", 1), 64)
-	return res
-}
-
-//получение страницы из урла url
-func gethtmlpage(url string) []byte {
-	resp, err := http.Get(url)
-	if err != nil {
-		fmt.Println("HTTP error:", err)
-		panic("HTTP error")
-	}
-	defer resp.Body.Close()
-	// вот здесь и начинается самое интересное
-	utf8, err := charset.NewReader(resp.Body, resp.Header.Get("Content-Type"))
-	if err != nil {
-		fmt.Println("Encoding error:", err)
-		panic("Encoding error")
-	}
-	body, err := ioutil.ReadAll(utf8)
-	if err != nil {
-		fmt.Println("IO error:", err)
-		panic("IO error")
-	}
-	return body
-}
-
-// вывод на печать массива строк
-func printarray(s []string) {
-	for i := 0; i < len(s); i++ {
-		fmt.Println(s[i])
-	}
-	return
-}
-
-func printarraykurs(s []Kurs) {
-	fmt.Println("|BANK   |", "VALUTA|", "POKUPKA|", "PRODAJA|")
-	fmt.Println("------------------------------------------------------------")
-	for _, v := range s {
-		fmt.Printf("|%-7s|%-7s|%8.2f|%8.2f|\n", v.namebank, v.valuta, v.pokupka, v.prodaja)
-	}
-	return
-}
-
-//парсер валют со сбербанка
-func ParserValutaSbrf(url string) []Kurs {
-
-	kursvaluta := make([]Kurs, 0)
-
-	if url == "" {
-		return kursvaluta
-	}
-
-	body := gethtmlpage(url)
-	shtml := string(body)
-	//	fmt.Println(shtml)
-
-	// выделяем данные из таблицы
-	stable, _ := pick.PickText(&pick.Option{
-		&shtml,
-		"table",
-		&pick.Attr{
-			"class",
-			"table3_eggs4",
-		},
-	})
-
-	stable = delspace(stable)
-	//	fmt.Println(stable)
-
-	kursvaluta = append(kursvaluta, Kurs{namebank: "SBRF", valuta: "USD"})
-	kursvaluta = append(kursvaluta, Kurs{namebank: "SBRF", valuta: "EUR"})
-	if len(stable) >= 6 {
-		// USD
-		kursvaluta[0].pokupka = convstrtofloat(stable[2])
-		kursvaluta[0].prodaja = convstrtofloat(stable[3])
-		// EUR
-		kursvaluta[1].pokupka = convstrtofloat(stable[4])
-		kursvaluta[1].prodaja = convstrtofloat(stable[5])
-	} else {
-		fmt.Println("Error parse ParserSbrf ")
-		fmt.Println(stable)
-	}
-
-	return kursvaluta
-}
-
-//парсер валют с ак барс банка
-func ParserValutaAkBars(url string) []Kurs {
-
-	kursvaluta := make([]Kurs, 0)
-
-	if url == "" {
-		return kursvaluta
-	}
-
-	body := gethtmlpage(url)
-	shtml := string(body)
-	//	fmt.Println(shtml)
-
-	// выделяем данные из таблицы
-	stable, _ := pick.PickText(&pick.Option{
-		&shtml,
-		"table",
-		&pick.Attr{
-			"class",
-			"tableDesc",
-		},
-	})
-
-	stable = delspace(stable)
-	//	fmt.Println(stable)
-
-	kursvaluta = append(kursvaluta, Kurs{namebank: "AKBARS", valuta: "USD"})
-	kursvaluta = append(kursvaluta, Kurs{namebank: "AKBARS", valuta: "EUR"})
-	if len(stable) >= 14 {
-		//		// USD
-		kursvaluta[0].pokupka = convstrtofloat(stable[3])
-		kursvaluta[0].prodaja = convstrtofloat(stable[5])
-		// EUR
-		kursvaluta[1].pokupka = convstrtofloat(stable[9])
-		kursvaluta[1].prodaja = convstrtofloat(stable[11])
-	} else {
-		fmt.Println("Error parse ParserAkBars ")
-		fmt.Println(stable)
-	}
-
-	return kursvaluta
-}
-
-//парсер валют с Татфондбанка банка
-func ParserValutaTfb(url string) []Kurs {
-
-	kursvaluta := make([]Kurs, 0)
-
-	if url == "" {
-		return kursvaluta
-	}
-
-	body := gethtmlpage(url)
-	shtml := string(body)
-	//	fmt.Println(shtml)
-
-	// выделяем данные из таблицы
-	stable, _ := pick.PickText(&pick.Option{
-		&shtml,
-		"tr",
-		&pick.Attr{
-			"class",
-			"usd",
-		},
-	})
-
-	stable2, _ := pick.PickText(&pick.Option{
-		&shtml,
-		"tr",
-		&pick.Attr{
-			"class",
-			"euro",
-		},
-	})
-
-	stable = delspace(stable)
-	stable2 = delspace(stable2)
-	//	fmt.Println(stable2)
-
-	kursvaluta = append(kursvaluta, Kurs{namebank: "TFB", valuta: "USD"})
-	kursvaluta = append(kursvaluta, Kurs{namebank: "TFB", valuta: "EUR"})
-	if (len(stable) >= 3) && (len(stable2) >= 3) {
-		//		// USD
-		kursvaluta[0].pokupka = convstrtofloat(stable[1])
-		kursvaluta[0].prodaja = convstrtofloat(stable[2])
-		//		// EUR
-		kursvaluta[1].pokupka = convstrtofloat(stable2[1])
-		kursvaluta[1].prodaja = convstrtofloat(stable2[2])
-	} else {
-		fmt.Println("Error parse ParserAkBars ")
-		fmt.Println("stable = ", stable)
-		fmt.Println("stable2 = ", stable2)
-	}
-
-	return kursvaluta
-}
-
-//парсер валют с Бинбанка
-func ParserValutaBibbank(url string) []Kurs {
-
-	kursvaluta := make([]Kurs, 0)
-
-	if url == "" {
-		return kursvaluta
-	}
-
-	body := gethtmlpage(url)
-	shtml := string(body)
-	//	fmt.Println(shtml)
-
-	// выделяем данные из таблицы
-	stable, _ := pick.PickText(&pick.Option{
-		&shtml,
-		"table",
-		&pick.Attr{
-			"class",
-			"step4_cours",
-		},
-	})
-
-	stable = delspace(stable)
-	//	fmt.Println(stable)
-
-	kursvaluta = append(kursvaluta, Kurs{namebank: "BINBANK", valuta: "USD"})
-	kursvaluta = append(kursvaluta, Kurs{namebank: "BINBANK", valuta: "EUR"})
-	//	if (len(stable) >= 3) && (len(stable2) >= 3) {
-	//		// USD
-	kursvaluta[0].pokupka = convstrtofloat(stable[3])
-	kursvaluta[0].prodaja = convstrtofloat(stable[4])
-	//		// EUR
-	kursvaluta[1].pokupka = convstrtofloat(stable[6])
-	kursvaluta[1].prodaja = convstrtofloat(stable[7])
-	//	} else {
-	//		fmt.Println("Error parse ParserAkBars ")
-	//		fmt.Println("stable = ", stable)
-	//		fmt.Println("stable2 = ", stable2)
-	//	}
-
-	return kursvaluta
-}
-
 func main() {
-	//	var vkurs Kurs
+	//	var vkurs parsebank.parsebank.Kurs
 	linksbanks := make(map[string]string, 0)
 	linksbanks["SBRF"] = "http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta"
 	linksbanks["TFB"] = "http://tfb.ru/"
 	linksbanks["AKBARS"] = "https://www.akbars.ru/"
 	linksbanks["BINBANK"] = "http://www.binbank.ru/"
+	linksbanks["BANKKAZAN"] = "http://www.bankofkazan.ru/"
+	linksbanks["ROSINTERBANK"] = "http://kazan.rosinterbank.ru/"
+	linksbanks["INTECHBANK"] = "http://www.intechbank.ru/"
+	linksbanks["VTB24"] = "http://www.vtb24.ru/"
+	linksbanks["HOMECREDIT"] = "http://kazan.homecredit.ru/?my_reg_id=46"
+	linksbanks["ALFABANK"] = "https://alfabank.ru/kazan/currency/"
 
-	fmt.Println(linksbanks)
+	//	fmt.Println(linksbanks)
 
-	board_valuta := make([]Kurs, 0)
+	board_Valuta := make([]parsebank.Kurs, 0)
 
 	fmt.Println("Start parser")
 
-	vkurs := ParserValutaSbrf(linksbanks["SBRF"])
-	board_valuta = append(board_valuta, vkurs[0])
-	board_valuta = append(board_valuta, vkurs[1])
+	vkurs := parsebank.ParserValutaSbrf(linksbanks["SBRF"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
 
-	vkurs = ParserValutaAkBars(linksbanks["AKBARS"])
-	board_valuta = append(board_valuta, vkurs[0])
-	board_valuta = append(board_valuta, vkurs[1])
+	vkurs = parsebank.ParserValutaAkBars(linksbanks["AKBARS"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
 
-	vkurs = ParserValutaTfb(linksbanks["TFB"])
-	board_valuta = append(board_valuta, vkurs[0])
-	board_valuta = append(board_valuta, vkurs[1])
+	vkurs = parsebank.ParserValutaTfb(linksbanks["TFB"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
 
-	vkurs = ParserValutaBibbank(linksbanks["BINBANK"])
-	board_valuta = append(board_valuta, vkurs[0])
-	board_valuta = append(board_valuta, vkurs[1])
+	vkurs = parsebank.ParserValutaBibbank(linksbanks["BINBANK"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
 
-	//	printarraykurs(board_valuta)
+	vkurs = parsebank.ParserValutaBankkazan(linksbanks["BANKKAZAN"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
 
-	ss := ""
-	for _, v := range board_valuta {
-		ss += "<TR>" + "<TD> " + v.namebank + "</TD>" + "<TD> " + v.valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.pokupka, 'f', 2, 32) + "</TD>" + "<TD> " + strconv.FormatFloat(v.prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+	vkurs = parsebank.ParserValutaRosinterbank(linksbanks["ROSINTERBANK"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
+
+	vkurs = parsebank.ParserValutaIntechbank(linksbanks["INTECHBANK"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
+
+	vkurs = parsebank.ParserValutaHomecredit(linksbanks["HOMECREDIT"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
+
+	//	vkurs = parsebank.ParserValutaAlfabank(linksbanks["ALFABANK"])
+	//	board_Valuta = append(board_Valuta, vkurs[0])
+	//	board_Valuta = append(board_Valuta, vkurs[1])
+
+	//	vkurs = ParserValutaVtb24(linksbanks["VTB24"])
+	//	board_Valuta = append(board_Valuta, vkurs[0])
+	//	board_Valuta = append(board_Valuta, vkurs[1])
+
+	//	printarraykurs(board_Valuta)
+
+	ss := "<TR><TD colspan='4' align='center'>USD</TD></TR>"
+	//USD
+	for _, v := range board_Valuta {
+		if v.Valuta == "USD" {
+			ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>" + "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+		}
+	}
+	//EUR
+	ss += "<TR><TD colspan='4' align='center'>EUR</TD></TR>"
+	//USD
+	for _, v := range board_Valuta {
+		if v.Valuta == "EUR" {
+			ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>" + "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+		}
 	}
 
 	str := pick.HtmlpageBegins() + pick.HtmlTableValuta(ss) + pick.HtmlpageEnds()

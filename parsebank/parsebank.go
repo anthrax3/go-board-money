@@ -167,7 +167,14 @@ func ParserValutaAkBars(url string) []Kurs {
 	}
 
 	if (kursvaluta[0].isNullKurs()) || (kursvaluta[1].isNullKurs()) {
-		fmt.Println(stable)
+		fmt.Println("See parse AkBars Bank")
+		//		fmt.Println(stable)
+		//		// USD
+		kursvaluta[0].Pokupka = convstrtofloat(stable[3])
+		kursvaluta[0].Prodaja = convstrtofloat(stable[5])
+		// EUR
+		kursvaluta[1].Pokupka = convstrtofloat(stable[8])
+		kursvaluta[1].Prodaja = convstrtofloat(stable[10])
 	}
 
 	return kursvaluta
@@ -470,7 +477,7 @@ func ParserValutaHomecredit(url string) []Kurs {
 	})
 
 	stable = delspace(stable)
-	fmt.Println(stable)
+	//	fmt.Println(st`able)
 
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "HOMECREDIT", Valuta: "USD"})
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "HOMECREDIT", Valuta: "EUR"})
@@ -508,10 +515,86 @@ func ParserValutaAlfabank(url string) []Kurs {
 	})
 
 	stable = delspace(stable)
-	fmt.Println(stable)
+	//	fmt.Println(stable)
 
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "ALFABANK", Valuta: "USD"})
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "ALFABANK", Valuta: "EUR"})
+	// USD
+	kursvaluta[0].Pokupka = convstrtofloat(stable[3])
+	kursvaluta[0].Prodaja = convstrtofloat(stable[4])
+	// EUR
+	kursvaluta[1].Pokupka = convstrtofloat(stable[6])
+	kursvaluta[1].Prodaja = convstrtofloat(stable[7])
+
+	return kursvaluta
+}
+
+//парсер валют с Akibank
+func ParserValutaAkibank(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"div",
+		&pick.Attr{
+			"id",
+			"kursy",
+		},
+	})
+
+	stable = delspace(stable)
+	//	fmt.Println(stable)
+
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "AKIBANK", Valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "AKIBANK", Valuta: "EUR"})
+	// USD
+	kursvaluta[0].Pokupka = convstrtofloat(stable[6])
+	kursvaluta[0].Prodaja = convstrtofloat(stable[7])
+	// EUR
+	kursvaluta[1].Pokupka = convstrtofloat(stable[9])
+	kursvaluta[1].Prodaja = convstrtofloat(stable[10])
+
+	return kursvaluta
+}
+
+//парсер валют с СпуртБанк
+func ParserValutaSpurtbank(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"table",
+		&pick.Attr{
+			"class",
+			"money-info",
+		},
+	})
+
+	stable = delspace(stable)
+	fmt.Println(stable)
+
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "SPURTBANK", Valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "SPURTBANK", Valuta: "EUR"})
 	// USD
 	kursvaluta[0].Pokupka = convstrtofloat(stable[3])
 	kursvaluta[0].Prodaja = convstrtofloat(stable[4])

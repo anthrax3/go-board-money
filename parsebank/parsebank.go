@@ -61,7 +61,7 @@ func gethtmlpage(url string) []byte {
 	body, err := ioutil.ReadAll(utf8)
 	if err != nil {
 		fmt.Println("IO error:", err)
-		panic("IO error")
+		//		panic("IO error")
 	}
 	return body
 }
@@ -591,10 +591,86 @@ func ParserValutaSpurtbank(url string) []Kurs {
 	})
 
 	stable = delspace(stable)
-	fmt.Println(stable)
+	//	fmt.Println(stable)
 
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "SPURTBANK", Valuta: "USD"})
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "SPURTBANK", Valuta: "EUR"})
+	// USD
+	kursvaluta[0].Pokupka = convstrtofloat(stable[3])
+	kursvaluta[0].Prodaja = convstrtofloat(stable[4])
+	// EUR
+	kursvaluta[1].Pokupka = convstrtofloat(stable[6])
+	kursvaluta[1].Prodaja = convstrtofloat(stable[7])
+
+	return kursvaluta
+}
+
+//парсер валют с Русский стандарт
+func ParserValutaRusstandartbank(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"table",
+		&pick.Attr{
+			"id",
+			"table_cash",
+		},
+	})
+
+	stable = delspace(stable)
+	//	fmt.Println(stable)
+
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "RUSSTANDARTBANK", Valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "RUSSTANDARTBANK", Valuta: "EUR"})
+	// USD
+	kursvaluta[0].Pokupka = convstrtofloat(stable[3])
+	kursvaluta[0].Prodaja = convstrtofloat(stable[4])
+	// EUR
+	kursvaluta[1].Pokupka = convstrtofloat(stable[6])
+	kursvaluta[1].Prodaja = convstrtofloat(stable[7])
+
+	return kursvaluta
+}
+
+//парсер валют с Росбанк
+func ParserValutaRosbank(url string) []Kurs {
+
+	kursvaluta := make([]Kurs, 0)
+
+	if url == "" {
+		return kursvaluta
+	}
+
+	body := gethtmlpage(url)
+	shtml := string(body)
+	//	fmt.Println(shtml)
+
+	// выделяем данные из таблицы
+	stable, _ := pick.PickText(&pick.Option{
+		&shtml,
+		"div",
+		&pick.Attr{
+			"class",
+			"rates",
+		},
+	})
+
+	stable = delspace(stable)
+	fmt.Println(stable)
+
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "ROSBANK", Valuta: "USD"})
+	kursvaluta = append(kursvaluta, Kurs{Namebank: "ROSBANK", Valuta: "EUR"})
 	// USD
 	kursvaluta[0].Pokupka = convstrtofloat(stable[3])
 	kursvaluta[0].Prodaja = convstrtofloat(stable[4])

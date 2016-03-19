@@ -28,6 +28,8 @@ func main() {
 	linksbanks["ALFABANK"] = "https://alfabank.ru/kazan/currency/"
 	linksbanks["AKIBANK"] = "http://www.akibank.ru/"
 	linksbanks["SPURTBANK"] = "http://www.spurtbank.ru/"
+	linksbanks["RUSSTANDARTBANK"] = "http://www.rsb.ru/courses/"
+	linksbanks["ROSBANK"] = "http://www.rosbank.ru/ru/"
 
 	//	fmt.Println(linksbanks)
 
@@ -72,6 +74,14 @@ func main() {
 	board_Valuta = append(board_Valuta, vkurs[1])
 
 	vkurs = parsebank.ParserValutaSpurtbank(linksbanks["SPURTBANK"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
+
+	vkurs = parsebank.ParserValutaRusstandartbank(linksbanks["RUSSTANDARTBANK"])
+	board_Valuta = append(board_Valuta, vkurs[0])
+	board_Valuta = append(board_Valuta, vkurs[1])
+
+	vkurs = parsebank.ParserValutaRosbank(linksbanks["ROSBANK"])
 	board_Valuta = append(board_Valuta, vkurs[0])
 	board_Valuta = append(board_Valuta, vkurs[1])
 

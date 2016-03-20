@@ -69,7 +69,8 @@ func gethtmlpage(url string) []byte {
 // вывод на печать массива строк
 func printarray(s []string) {
 	for i := 0; i < len(s); i++ {
-		fmt.Println(s[i])
+		fmt.Print(i)
+		fmt.Println(" - ", s[i])
 	}
 	return
 }
@@ -667,16 +668,30 @@ func ParserValutaRosbank(url string) []Kurs {
 	})
 
 	stable = delspace(stable)
-	fmt.Println(stable)
+	//	fmt.Println(stable)
+	printarray(stable)
 
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "ROSBANK", Valuta: "USD"})
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "ROSBANK", Valuta: "EUR"})
 	// USD
-	kursvaluta[0].Pokupka = convstrtofloat(stable[3])
-	kursvaluta[0].Prodaja = convstrtofloat(stable[4])
+	susd := stable[6]
+	ausd := strings.Split(susd, "/")
+
+	fmt.Println(ausd)
+	q := ausd[0]
+	fmt.Println(ausd[0])
+	qq, _ := strconv.ParseFloat(strings.Replace(q, ",", ".", 1), 64)
+	fmt.Println(qq)
+	//	strconv.ParseFloat(strings.Replace(s, ",", ".", 1), 64)
+
+	kursvaluta[0].Pokupka = convstrtofloat(ausd[0])
+	kursvaluta[0].Prodaja = convstrtofloat(ausd[1])
 	// EUR
-	kursvaluta[1].Pokupka = convstrtofloat(stable[6])
-	kursvaluta[1].Prodaja = convstrtofloat(stable[7])
+	seur := stable[12]
+	aeur := strings.Split(seur, "/")
+	fmt.Println(aeur)
+	kursvaluta[1].Pokupka = convstrtofloat(aeur[0])
+	kursvaluta[1].Prodaja = convstrtofloat(aeur[1])
 
 	return kursvaluta
 }

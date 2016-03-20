@@ -40,7 +40,7 @@ func delspace(ss []string) []string {
 }
 
 func convstrtofloat(s string) float64 {
-	res, _ := strconv.ParseFloat(strings.Replace(s, ",", ".", 1), 64)
+	res, _ := strconv.ParseFloat(strings.Replace(strings.TrimSpace(s), ",", ".", 1), 64)
 	return res
 }
 
@@ -676,14 +676,6 @@ func ParserValutaRosbank(url string) []Kurs {
 	// USD
 	susd := stable[6]
 	ausd := strings.Split(susd, "/")
-
-	fmt.Println(ausd)
-	q := ausd[0]
-	fmt.Println(ausd[0])
-	qq, _ := strconv.ParseFloat(strings.Replace(q, ",", ".", 1), 64)
-	fmt.Println(qq)
-	//	strconv.ParseFloat(strings.Replace(s, ",", ".", 1), 64)
-
 	kursvaluta[0].Pokupka = convstrtofloat(ausd[0])
 	kursvaluta[0].Prodaja = convstrtofloat(ausd[1])
 	// EUR

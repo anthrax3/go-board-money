@@ -669,7 +669,7 @@ func ParserValutaRosbank(url string) []Kurs {
 
 	stable = delspace(stable)
 	//	fmt.Println(stable)
-	printarray(stable)
+	//	printarray(stable)
 
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "ROSBANK", Valuta: "USD"})
 	kursvaluta = append(kursvaluta, Kurs{Namebank: "ROSBANK", Valuta: "EUR"})
@@ -681,7 +681,6 @@ func ParserValutaRosbank(url string) []Kurs {
 	// EUR
 	seur := stable[12]
 	aeur := strings.Split(seur, "/")
-	fmt.Println(aeur)
 	kursvaluta[1].Pokupka = convstrtofloat(aeur[0])
 	kursvaluta[1].Prodaja = convstrtofloat(aeur[1])
 

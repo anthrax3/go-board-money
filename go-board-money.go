@@ -169,7 +169,17 @@ func main() {
 	//USD
 	for _, v := range board_Valuta {
 		if v.Valuta == "USD" {
-			ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>" + "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+			if usdpokupka == v.Pokupka {
+				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+			} else {
+				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+			}
+			if usdprodaja == v.Prodaja {
+				ss += "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+			} else {
+				ss += "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+			}
+
 		}
 	}
 	//EUR
@@ -177,7 +187,16 @@ func main() {
 	//USD
 	for _, v := range board_Valuta {
 		if v.Valuta == "EUR" {
-			ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>" + "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+			if eurpokupka == v.Pokupka {
+				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+			} else {
+				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+			}
+			if eurprodaja == v.Prodaja {
+				ss += "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+			} else {
+				ss += "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
+			}
 		}
 	}
 

@@ -170,9 +170,9 @@ func main() {
 	for _, v := range board_Valuta {
 		if v.Valuta == "USD" {
 			if usdpokupka == v.Pokupka {
-				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</a></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
 			} else {
-				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</A></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
 			}
 			if usdprodaja == v.Prodaja {
 				ss += "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
@@ -188,9 +188,9 @@ func main() {
 	for _, v := range board_Valuta {
 		if v.Valuta == "EUR" {
 			if eurpokupka == v.Pokupka {
-				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</A></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
 			} else {
-				ss += "<TR>" + "<TD> " + v.Namebank + "</TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
+				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</A></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
 			}
 			if eurprodaja == v.Prodaja {
 				ss += "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"

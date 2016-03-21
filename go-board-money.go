@@ -15,6 +15,8 @@ import (
 
 func main() {
 	//	var vkurs parsebank.parsebank.Kurs
+	//	namebanks := []string{"SBRF", "TFB", "AKBARS", "BINBANK", "BANKKAZAN", "ROSINTERBANK", "INTECHBANK", "VTB24", "HOMECREDIT", "ALFABANK", "SPURTBANK", "RUSSTANDARTBANK", "ROSBANK"}
+	//	fmt.Println(namebanks)
 	linksbanks := make(map[string]string, 0)
 	linksbanks["SBRF"] = "http://data.sberbank.ru/tatarstan/ru/quotes/currencies/?base=beta"
 	linksbanks["TFB"] = "http://tfb.ru/"
@@ -31,67 +33,52 @@ func main() {
 	linksbanks["RUSSTANDARTBANK"] = "http://www.rsb.ru/courses/"
 	linksbanks["ROSBANK"] = "http://www.rosbank.ru/ru/"
 
-	//	fmt.Println(linksbanks)
-
 	board_Valuta := make([]parsebank.Kurs, 0)
 
 	fmt.Println("Start parser")
 
-	vkurs := parsebank.ParserValutaSbrf(linksbanks["SBRF"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
+	for i, vk := range linksbanks {
+		var vkurs []parsebank.Kurs
+		switch i {
+		case "SBRF":
+			vkurs = parsebank.ParserValutaSbrf(vk)
+		case "TFB":
+			vkurs = parsebank.ParserValutaTfb(vk)
+		case "AKBARS":
+			vkurs = parsebank.ParserValutaAkBars(vk)
+		case "BINBANK":
+			vkurs = parsebank.ParserValutaBibbank(vk)
+		case "BANKKAZAN":
+			vkurs = parsebank.ParserValutaBankkazan(vk)
+		case "ROSINTERBANK":
+			vkurs = parsebank.ParserValutaRosinterbank(vk)
+		case "INTECHBANK":
+			vkurs = parsebank.ParserValutaIntechbank(vk)
+		case "VTB24":
+			//			vkurs = ParserValutaVtb24(vk)
+			vkurs = make([]parsebank.Kurs, 2)
+		case "HOMECREDIT":
+			vkurs = parsebank.ParserValutaHomecredit(vk)
+		case "ALFABANK":
+			//			vkurs = parsebank.ParserValutaAlfabank(vk)
+			vkurs = make([]parsebank.Kurs, 2)
+		case "AKIBANK":
+			vkurs = parsebank.ParserValutaAkibank(vk)
+		case "SPURTBANK":
+			vkurs = parsebank.ParserValutaSpurtbank(vk)
+		case "RUSSTANDARTBANK":
+			vkurs = parsebank.ParserValutaRusstandartbank(vk)
+		case "ROSBANK":
+			vkurs = parsebank.ParserValutaRosbank(vk)
+		default:
+			vkurs = make([]parsebank.Kurs, 2)
+		}
 
-	vkurs = parsebank.ParserValutaAkBars(linksbanks["AKBARS"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
+		board_Valuta = append(board_Valuta, vkurs[0])
+		board_Valuta = append(board_Valuta, vkurs[1])
+	}
 
-	vkurs = parsebank.ParserValutaTfb(linksbanks["TFB"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaBibbank(linksbanks["BINBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaBankkazan(linksbanks["BANKKAZAN"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaRosinterbank(linksbanks["ROSINTERBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaIntechbank(linksbanks["INTECHBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaHomecredit(linksbanks["HOMECREDIT"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaAkibank(linksbanks["AKIBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaSpurtbank(linksbanks["SPURTBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaRusstandartbank(linksbanks["RUSSTANDARTBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	vkurs = parsebank.ParserValutaRosbank(linksbanks["ROSBANK"])
-	board_Valuta = append(board_Valuta, vkurs[0])
-	board_Valuta = append(board_Valuta, vkurs[1])
-
-	//	vkurs = parsebank.ParserValutaAlfabank(linksbanks["ALFABANK"])
-	//	board_Valuta = append(board_Valuta, vkurs[0])
-	//	board_Valuta = append(board_Valuta, vkurs[1])
-
-	//	vkurs = ParserValutaVtb24(linksbanks["VTB24"])
-	//	board_Valuta = append(board_Valuta, vkurs[0])
-	//	board_Valuta = append(board_Valuta, vkurs[1])
+	//	fmt.Println(linksbanks)
 
 	//	printarraykurs(board_Valuta)
 
@@ -115,6 +102,7 @@ func main() {
 	fmt.Print("Лучшая продажа EUR: ")
 	fmt.Println(eurkursprodaja)
 	//---END опредление лучших цен на валюты
+
 	ss := parsebank.GenTableKursValuta(board_Valuta, linksbanks, usdkurspokupka, usdkursprodaja, eurkurspokupka, eurkursprodaja)
 	str := pick.HtmlpageBegins() + pick.HtmlTableValuta(ss) + pick.HtmlpageEnds()
 	pick.Savestrtofile("board-money.html", str)

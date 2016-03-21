@@ -169,7 +169,7 @@ func ParserValutaAkBars(url string) []Kurs {
 
 	if (kursvaluta[0].isNullKurs()) || (kursvaluta[1].isNullKurs()) {
 		fmt.Println("See parse AkBars Bank")
-		//		fmt.Println(stable)
+		fmt.Println(stable)
 		//		// USD
 		kursvaluta[0].Pokupka = convstrtofloat(stable[3])
 		kursvaluta[0].Prodaja = convstrtofloat(stable[5])

@@ -7,7 +7,7 @@ import (
 	"go-board-money/pick"
 	//	"io/ioutil"
 	//	"net/http"
-	"strconv"
+	//	"strconv"
 	//	"strings"
 
 	//	"golang.org/x/net/html/charset"
@@ -95,59 +95,27 @@ func main() {
 
 	//	printarraykurs(board_Valuta)
 
+	//---опредление лучших цен на валюты
 	board_usd := parsebank.FilterValuta(board_Valuta, "USD")
-	usdbank, usdpokupka := parsebank.MaxPokupkaValuta(board_usd)
+	usdkurspokupka := parsebank.MaxPokupkaValuta(board_usd)
+	//usdbank, usdpokupka :=usdkurspokupka.
 	fmt.Print("Лучшая покупка USD: ")
-	fmt.Println(usdbank, usdpokupka)
+	fmt.Println(usdkurspokupka)
 
-	usdbank2, usdprodaja := parsebank.MinProdajaValuta(board_usd)
+	usdkursprodaja := parsebank.MinProdajaValuta(board_usd)
 	fmt.Print("Лучшая продажа USD: ")
-	fmt.Println(usdbank2, usdprodaja)
+	fmt.Println(usdkursprodaja)
 
 	board_eur := parsebank.FilterValuta(board_Valuta, "EUR")
-	eurbank, eurpokupka := parsebank.MaxPokupkaValuta(board_eur)
+	eurkurspokupka := parsebank.MaxPokupkaValuta(board_eur)
 	fmt.Print("Лучшая покупка EUR: ")
-	fmt.Println(eurbank, eurpokupka)
+	fmt.Println(eurkurspokupka)
 
-	eurbank2, eurprodaja := parsebank.MinProdajaValuta(board_eur)
+	eurkursprodaja := parsebank.MinProdajaValuta(board_eur)
 	fmt.Print("Лучшая продажа EUR: ")
-	fmt.Println(eurbank2, eurprodaja)
-
-	ss := "<TR><TD colspan='4' align='center'>USD</TD></TR>"
-	//USD
-	for _, v := range board_Valuta {
-		if v.Valuta == "USD" {
-			if usdpokupka == v.Pokupka {
-				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</a></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
-			} else {
-				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</A></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
-			}
-			if usdprodaja == v.Prodaja {
-				ss += "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
-			} else {
-				ss += "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
-			}
-
-		}
-	}
-	//EUR
-	ss += "<TR><TD colspan='4' align='center'>EUR</TD></TR>"
-	//USD
-	for _, v := range board_Valuta {
-		if v.Valuta == "EUR" {
-			if eurpokupka == v.Pokupka {
-				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</A></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
-			} else {
-				ss += "<TR>" + "<TD> <A href ='" + linksbanks[v.Namebank] + "'>" + v.Namebank + "</A></TD>" + "<TD> " + v.Valuta + "</TD>" + "<TD> " + strconv.FormatFloat(v.Pokupka, 'f', 2, 32) + "</TD>"
-			}
-			if eurprodaja == v.Prodaja {
-				ss += "<TD bgcolor='#008000'> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
-			} else {
-				ss += "<TD> " + strconv.FormatFloat(v.Prodaja, 'f', 2, 32) + "</TD>" + "</TR>"
-			}
-		}
-	}
-
+	fmt.Println(eurkursprodaja)
+	//---END опредление лучших цен на валюты
+	ss := parsebank.GenTableKursValuta(board_Valuta, linksbanks, usdkurspokupka, usdkursprodaja, eurkurspokupka, eurkursprodaja)
 	str := pick.HtmlpageBegins() + pick.HtmlTableValuta(ss) + pick.HtmlpageEnds()
 	pick.Savestrtofile("board-money.html", str)
 

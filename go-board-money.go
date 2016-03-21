@@ -13,58 +13,6 @@ import (
 	//	"golang.org/x/net/html/charset"
 )
 
-// возвращает массив курсов удовлетворяющих фильтру по валюте svaluta
-func FilterValuta(s []parsebank.Kurs, svaluta string) []parsebank.Kurs {
-	res := make([]parsebank.Kurs, 0)
-	for _, v := range s {
-		if v.Valuta == svaluta {
-			res = append(res, v)
-		}
-	}
-
-	return res
-}
-
-// максимальная цена покупки банком валюты и название банка
-func MaxPokupkaValuta(s []parsebank.Kurs) (string, float64) {
-	bank := ""
-	pokupka := 0.0
-	if len(s) <= 0 {
-		return bank, pokupka
-	}
-
-	bank = s[0].Namebank
-	pokupka = s[0].Pokupka
-	for i := 1; i < len(s); i++ {
-		if pokupka < s[i].Pokupka {
-			pokupka = s[i].Pokupka
-			bank = s[i].Namebank
-		}
-	}
-
-	return bank, pokupka
-}
-
-// минимальная цена продажи банком валюты и название банка
-func MinProdajaValuta(s []parsebank.Kurs) (string, float64) {
-	bank := ""
-	prodaja := 0.0
-	if len(s) <= 0 {
-		return bank, prodaja
-	}
-
-	bank = s[0].Namebank
-	prodaja = s[0].Prodaja
-	for i := 1; i < len(s); i++ {
-		if prodaja > s[i].Prodaja {
-			prodaja = s[i].Prodaja
-			bank = s[i].Namebank
-		}
-	}
-
-	return bank, prodaja
-}
-
 func main() {
 	//	var vkurs parsebank.parsebank.Kurs
 	linksbanks := make(map[string]string, 0)
@@ -147,21 +95,21 @@ func main() {
 
 	//	printarraykurs(board_Valuta)
 
-	board_usd := FilterValuta(board_Valuta, "USD")
-	usdbank, usdpokupka := MaxPokupkaValuta(board_usd)
+	board_usd := parsebank.FilterValuta(board_Valuta, "USD")
+	usdbank, usdpokupka := parsebank.MaxPokupkaValuta(board_usd)
 	fmt.Print("Лучшая покупка USD: ")
 	fmt.Println(usdbank, usdpokupka)
 
-	usdbank2, usdprodaja := MinProdajaValuta(board_usd)
+	usdbank2, usdprodaja := parsebank.MinProdajaValuta(board_usd)
 	fmt.Print("Лучшая продажа USD: ")
 	fmt.Println(usdbank2, usdprodaja)
 
-	board_eur := FilterValuta(board_Valuta, "EUR")
-	eurbank, eurpokupka := MaxPokupkaValuta(board_eur)
+	board_eur := parsebank.FilterValuta(board_Valuta, "EUR")
+	eurbank, eurpokupka := parsebank.MaxPokupkaValuta(board_eur)
 	fmt.Print("Лучшая покупка EUR: ")
 	fmt.Println(eurbank, eurpokupka)
 
-	eurbank2, eurprodaja := MinProdajaValuta(board_eur)
+	eurbank2, eurprodaja := parsebank.MinProdajaValuta(board_eur)
 	fmt.Print("Лучшая продажа EUR: ")
 	fmt.Println(eurbank2, eurprodaja)
 

@@ -12,6 +12,11 @@ import (
 	//	"golang.org/x/net/html/charset"
 )
 
+func FloatToString(input_num float64) string {
+
+	return strconv.FormatFloat(input_num, 'f', 2, 32)
+}
+
 // возвращает массив курсов удовлетворяющих фильтру по валюте svaluta
 func FilterValuta(s []Kurs, svaluta string) []Kurs {
 	res := make([]Kurs, 0)

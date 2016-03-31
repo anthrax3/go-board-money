@@ -14,7 +14,7 @@ import (
 
 func FloatToString(input_num float64) string {
 	// to convert a float number to a string
-	return strconv.FormatFloat(input_num, 'f', 6, 64)
+	return strconv.FormatFloat(input_num, 'f', 2, 64)
 }
 
 // возвращает массив курсов удовлетворяющих фильтру по валюте svaluta

@@ -162,6 +162,9 @@ func ParserValutaAkBars(url string) []Kurs {
 		// EUR
 		kursvaluta[1].Pokupka = convstrtofloat(stable[10])
 		kursvaluta[1].Prodaja = convstrtofloat(stable[13])
+		//		fmt.Println("stable= ", stable)
+		//		fmt.Println("kursvaluta[0]= ", kursvaluta[0])
+		//		fmt.Println("kursvaluta[1]= ", kursvaluta[1])
 	} else {
 		fmt.Println("Error parse ParserAkBars ")
 		fmt.Println(stable)
@@ -169,13 +172,24 @@ func ParserValutaAkBars(url string) []Kurs {
 
 	if (kursvaluta[0].isNullKurs()) || (kursvaluta[1].isNullKurs()) {
 		fmt.Println("See parse AkBars Bank")
-		fmt.Println(stable)
+		//		fmt.Println(stable)
 		//		// USD
 		kursvaluta[0].Pokupka = convstrtofloat(stable[3])
 		kursvaluta[0].Prodaja = convstrtofloat(stable[5])
 		// EUR
 		kursvaluta[1].Pokupka = convstrtofloat(stable[8])
 		kursvaluta[1].Prodaja = convstrtofloat(stable[10])
+		//		fmt.Println("stable= ", stable)
+		//		fmt.Println("kursvaluta[0]= ", kursvaluta[0])
+		//		fmt.Println("kursvaluta[1]= ", kursvaluta[1])
+		if (kursvaluta[0].isNullKurs()) || (kursvaluta[1].isNullKurs()) {
+			//		// USD
+			kursvaluta[0].Pokupka = convstrtofloat(stable[3])
+			kursvaluta[0].Prodaja = convstrtofloat(stable[5])
+			// EUR
+			kursvaluta[1].Pokupka = convstrtofloat(stable[9])
+			kursvaluta[1].Prodaja = convstrtofloat(stable[11])
+		}
 	}
 
 	return kursvaluta
